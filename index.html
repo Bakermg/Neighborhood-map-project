@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Neighborhood Map</title>
+    <style>
+    html,
+    body {
+        font-family: Arial, sans-serif;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    #map {
+        bottom: 0px;
+        height: 100%;
+        left: 362px;
+        position: absolute;
+        right: 0px;
+    }
+
+    .options-box {
+        background: #fff;
+        border: 1px solid #999;
+        border-radius: 3px;
+        height: 100%;
+        line-height: 35px;
+        padding: 10px 10px 30px 10px;
+        text-align: left;
+        width: 340px;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="options-box">
+            <h1>Where to Eat</h1>
+            <div>
+                <input type="button" value="Show Listings" id="show-listings">
+                <input type="button" value="Hide Listings" id="hide-listings">
+            </div>
+        </div>
+    </div>
+    <div id="map"></div>
+    <script>
+    var map;
+
+    var markers = [];
+
+    function initMap() {
+
+        var styles = [{
+                "featureType": "administrative",
+                "stylers": [{
+                    "visibility": "off"
+                }]
+            }, {
+                "featureType": "poi",
+                "stylers": [{
+                    "visibility": "simplified"
+                }]
+            }, {
+                "featureType": "road",
+                "stylers": [{
+                    "visibility": "simplified"
+                }]
+            }, {
+                "featureType": "water",
+                "stylers": [{
+                    "visibility": "simplified"
+                }]
+            }, {
+                "featureType": "transit",
+                "stylers": [{
+                    "visibility": "simplified"
+                }]
+            }, {
+                "featureType": "landscape",
+                "stylers": [{
+                    "visibility": "simplified"
+                }]
+            }, {
+                "featureType": "road.highway",
+                "stylers": [{
+                    "visibility": "off"
+                }]
+            }, {
+                "featureType": "road.local",
+                "stylers": [{
+                    "visibility": "on"
+                }]
+            }, {
+                "featureType": "road.highway",
+                "elementType": "geometry",
+                "stylers": [{
+                    "visibility": "on"
+                }]
+            }, {
+                "featureType": "water",
+                "stylers": [{
+                    "color": "#84afa3"
+                }, {
+                    "lightness": 52
+                }]
+            }, {
+                "stylers": [{
+                    "saturation": -77
+                }]
+            }, {
+                "featureType": "road"
+            }];
+            // creates a new map
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: {
+                lat: 26.09951,
+                lng: -80.38377
+            },
+            zoom: 13,
+            styles: styles,
+            mapTypeControl: false
+        });
+
+        // There are the listings that will be shown
+        var locations = [{
+                title: 'Starbucks',
+                location: {
+                    lat: 26.097046,
+                    lng: -80.381578
+                }
+            }, {
+                title: 'Graciano',
+                location: {
+                    lat: 26.097359,
+                    lng: -80.381417
+                }
+            }, {
+                title: 'Japan Inn',
+                location: {
+                    lat: 26.097205,
+                    lng: -80.379465
+                }
+            }, {
+                title: 'Duffy',
+                location: {
+                    lat: 26.096121,
+                    lng: -80.379753
+                }
+            }, {
+                title: 'Yougart Land',
+                location: {
+                    lat: 26.097740,
+                    lng: -80.381343
+                }
+            }
+
+        ];
+
+        var largeInfowindow = new google.maps.InfoWindow();
+
+        var defaultIcon = makeMarkerIcon('0091ff');
+
+        var highlightedIcon = makeMarkerIcon('ffff24');
+
+        for (var i = 0; i < locations.length; i++) {
+            var position = locations[i].location;
+            var title = locations[i].title;
+
+            var marker = new google.maps.Marker({
+                map: map,
+                position: position,
+                title: title,
+                icon: defaultIcon,
+                animation: google.maps.Animation.DROP,
+                id: i
+            });
+
+            markers.push(marker);
+
+            marker.addListener('click', function() {
+                populateInfoWindow(this, largeInfowindow);
+            });
+
+            marker.addListener('mouseover', function() {
+                this.setIcon(highlightedIcon);
+            });
+            marker.addListener('mouseout', function() {
+                this.setIcon(defaultIcon)
+            });
+        }
+
+        document.getElementById('show-listings').addEventListener('click', showListings);
+        document.getElementById('hide-listings').addEventListener('click', hideListings);
+    }
+        function populateInfoWindow(marker, infowindow) {
+            if (infowindow.marker != marker) {
+                infowindow.setContent('');
+                infowindow.marker = marker;
+                infowindow.addListener('closeclick', function() {
+                    infowindow.marker = null;
+                });
+
+
+                var streetViewService = new google.maps.StreetViewService();
+                var radius = 50;
+
+                function getStreetView(data, status) {
+                    if (status == google.maps.StreetViewStatus.OK) {
+                        var nearStreetViewLocation = data.location.latLng;
+                        var heading = google.maps.geometry.spherical.computeHeading(nearStreetViewLocation, marker.position);
+                        infowindow.setContent('<div>' + marker.title + '</div><div id="pano"></div>');
+                        var panoramaOptions = {
+                            postion: nearStreetViewLocation,
+                            pov: {
+                                heading: heading,
+                                pitch: 30
+                            }
+                        };
+                        var panorama = new google.maps.StreetViewPanorama(
+                            document.getElementById('pano'), panoramaOptions);
+                    } else {
+                        infowindow.setContent('<div>' + marker.title + '</div>' +
+                            '<div>No Street View Found</div>');
+                    }
+                }
+
+                streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
+                infowindow.open(map, marker);
+            }
+        }
+
+        function showListings() {
+            var bounds = new google.maps.LatLngBounds();
+
+            for (var i = 0; i < markers.length; i++) {
+                markers[i].setMap(map);
+                bounds.extend(markers[i].position);
+            }
+
+        }
+
+        function hideListings() {
+            for (var i = 0; i < markers.length; i++) {
+                markers[i].setMap(null);
+            }
+        }
+
+        function makeMarkerIcon(markerColor) {
+            var markerImage = new google.maps.MarkerImage(
+                'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|' + markerColor + '|40|_|%E2%80%A2',
+                new google.maps.Size(21, 34),
+                new google.maps.Point(0, 0),
+                new google.maps.Point(10, 34),
+                new google.maps.Size(21, 34));
+            return markerImage;
+        }
+
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=geometry&key=&v=3&callback=initMap">
+    </script>
+</body>
+
+</html>
