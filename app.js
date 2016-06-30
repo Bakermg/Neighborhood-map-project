@@ -161,6 +161,11 @@ function initMap() {
     document.getElementById('toggle-drawing').addEventListener('click', function() {
       toggleDrawing(drawingManager);
     });
+    drawingManager.addListener('overlaycomplete', function (event) {
+      var poygonArea = google.maps.geometry.spherical.computeArea(polygon.getPath());
+      window.alert(area + "SQUARE METERS");
+    });
+
 
     drawingManager.addListener('overlaycomplete', function (event) {
 
