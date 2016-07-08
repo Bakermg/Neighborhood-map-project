@@ -71,7 +71,7 @@ function initMap() {
             lat: 26.09951,
             lng: -80.38377
         },
-        zoom: 16,
+        zoom: 14,
         styles: styles,
         mapTypeControl: false
     });
@@ -167,7 +167,7 @@ function initMap() {
             window.alert(polygonArea + "SQUARE METERS");
         });
 
-        document.getElementById('zoom-to-area').addEventListener(click, function() {
+        document.getElementById('zoom-to-area').addEventListener('click', function() {
             zoomToArea();
         })
 
@@ -251,7 +251,7 @@ function zoomToArea() {
         },function(results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
                 map.setCenter(results[0].geometry.location);
-                map.setZoom(15);
+                map.setZoom(14);
             } else {
                 window.alert('We could not find that location');
             }

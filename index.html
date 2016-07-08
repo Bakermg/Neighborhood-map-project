@@ -4,63 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <title>Neighborhood Map</title>
-    <style>
-    html,
-    body {
-        font-family: Arial, sans-serif;
-        height: 100%;
-        margin: 0;
-        padding: 0;
-    }
+    <<link rel="stylesheet" href="mainstyles.css">
 
-    #map {
-        bottom: 0px;
-        height: 100%;
-        left: 362px;
-        position: absolute;
-        right: 0px;
-    }
-
-    .options-box {
-        background: #fff;
-        border: 1px solid #999;
-        border-radius: 3px;
-        height: 100%;
-        line-height: 35px;
-        padding: 10px 10px 30px 10px;
-        text-align: left;
-        width: 340px;
-    }
-    .text {
-      font-size: 12px;
-    }
-
-    #toggle-drawing {
-      width: 27%;
-      position: relative;
-      margin-left: 10px;
-    }
-
-    #zoom-to-area {
-      width: 24%;
-    }
-
-    #zoom-to-area-text{
-      position: relative;
-      width: 70%;
-    }
     </style>
 </head>
 
 <body>
     <div class="container">
         <div class="options-box">
-            <h1>Where to Eat</h1>
+            <h1>Find Homes for Sale<br> with the Best Schools</h1>
             <div>
                 <input type="button" value="Show Listings" id="show-listings">
                 <input type="button" value="Hide Listings" id="hide-listings">
                 <hr>
-                <span class="text">Draw a shape to search within it for food</span>
+                <span class="text">Draw a shape to search within it for an area to live</span>
                 <input type="button" value="Drawing Tools" id="toggle-drawing">
             </div>
             <div>

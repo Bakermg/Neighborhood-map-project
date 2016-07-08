@@ -1,0 +1,50 @@
+html,
+body {
+    font-family: Arial, sans-serif;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#map {
+    bottom: 0px;
+    height: 100%;
+    /*left: 362px;*/
+    width: 100%;
+    position: absolute;
+    right: 0px;
+}
+
+.options-box {
+  position: absolute;
+  top: 10px;
+  left: 2%;
+  z-index: 5;
+  height:90%;
+  background-color: lightgray;
+  padding: 5px;
+  border: 1px solid #gray;
+  text-align: center;
+  font-family: 'Roboto','sans-serif';
+  line-height: 30px;
+  padding-left: 10px;
+  opacity: 0.9;
+}
+.text {
+  font-size: 12px;
+}
+
+#toggle-drawing {
+  width: 27%;
+  position: relative;
+  margin-left: 10px;
+}
+
+#zoom-to-area {
+  width: 24%;
+}
+
+#zoom-to-area-text{
+  position: relative;
+  width: 70%;
+}
